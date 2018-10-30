@@ -7,17 +7,8 @@ def add_counter(df):
 
 
 def round_timestamp(df, days):
-    def rounded(num):
-        try:
-            res = num / (3600*24*days)
-        except TypeError as e:
-            res = num
-        return res
-    my_udf = udf(lambda x: rounded(x), IntegerType())
-    return df.withColumn("rounded_timestamp", my_udf(df["timestamp"]))\
-            .drop("timestamp")\
-            .withColumnRenamed("rounded_timestamp", "timestamp")
-
+    return df.withColumn("timestamp", (df["timestamp"] - df["timestamp"] % (3600*24*days))/(3600*24*days))
+    
 def group(df):
     return df.groupBy("content_id", "timestamp")\
             .sum("counter", "rating")\
