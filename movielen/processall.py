@@ -15,10 +15,11 @@ filepath =("./data_filtered_5k/data_filtered.txt")
 parser = argparse.ArgumentParser()
 parser.add_argument("--interval", help="Insert interval to integrate data (days)")
 args = parser.parse_args()
+data_int = int(5) #default value
 if args.interval:
-    data_int = args.interval
-else:
-    data_int = 5
+    num = args.interval
+    if schema.toInt(num) is not None:
+        data_int = int(num)
 
 # Load a text file to RDD and convert each line to a Row.
 lines = sc.textFile(filepath)
@@ -29,7 +30,7 @@ record = parsed_data.map(lambda r: Row(timestamp=schema.toInt(r[0]), content_id=
 data_df = spark.createDataFrame(record, schema=schema.data_schema).na.drop()
 
 # Round time follow the interval
-df_rounded = transformation.round_timestamp(data_df,data_int)
+df_rounded = transformation.round_timestamp(data_df,int(data_int))
 
 # Group data follow time interval
 df_grouped = transformation.group(df_rounded)
