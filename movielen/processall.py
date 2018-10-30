@@ -40,4 +40,4 @@ df_grouped = transformation.group(df_rounded)
 
 # Lable data
 data_label = transformation.der_lab_data(df_grouped)
-data_label.coalesce(1).write.csv("dataset_"+data_int+"_days_interval", sep=";")
+data_label.repartition(1344, data_label["content_id"]).write.csv("dataset_"+data_int+"_days_interval", sep=";")
