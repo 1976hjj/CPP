@@ -6,10 +6,10 @@ def add_counter(df):
     return df.withColumn("count", lit(1))
 
 
-def round_timestamp(df, hours):
+def round_timestamp(df, days):
     def rounded(num):
         try:
-            res = num / (3600*hours)
+            res = num / (3600*24*days)
         except TypeError as e:
             res = num
         return res
@@ -54,7 +54,7 @@ def derivative(df):
 def label(df):
     window = Window.partitionBy("content_id").orderBy("timestamp")
     return df.withColumn("label", when((lag(df["counts"], -1).over(window)).isNull(), 0).otherwise(lag(df["counts"], -1).over(window)))\
-            .select("counts", "d1", "d2", "label")\
+            .select("counts", "d1", "d2", "label")
 
 def derivative_2(df):
     window = Window.partitionBy("content_id").orderBy("timestamp")
@@ -65,3 +65,10 @@ def filter_by_contentid(df, content_id):
 
 def filter_by_count(df, threshold):
     return df.filter(df["count"] >= threshold)
+
+def der_lab_data(df):
+    window = Window.partitionBy("content_id").orderBy("timestamp")
+    df_der_1 = df.withColumn("d1", df["counts"] - when((lag(df["counts"], 1).over(window)).isNull(), 0).otherwise(lag(df["counts"], 1).over(window)))\
+                .withColumn("label", when((lag(df["counts"], -1).over(window)).isNull(), 0).otherwise(lag(df["counts"], -1).over(window)))
+    return df_der_1.withColumn("d2", df_der_1["d1"] - when((lag(df_der_1["d1"], 1).over(window)).isNull(), 0).otherwise(lag(df_der_1["d1"], 1).over(window)))\
+                .select("content_id","counts", "d1", "d2", "label")
