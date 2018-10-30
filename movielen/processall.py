@@ -37,7 +37,9 @@ df_grouped = transformation.group(df_rounded)
 # Calculate the derivative level 1 and 2
 #df_derivative = transformation.derivative(df_grouped)
 #df_derivative_2 = transformation.derivative_2(df_derivative)
+# Sort data
+df_sorted = transformation.sort_df(df_grouped)
 
 # Lable data
-data_label = transformation.der_lab_data(df_grouped)
+data_label = transformation.der_lab_data(df_sorted)
 data_label.repartition(1344, data_label["content_id"]).write.csv("dataset_"+data_int+"_days_interval", sep=";")
