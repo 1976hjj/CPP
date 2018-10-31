@@ -69,7 +69,8 @@ def export_list_request(df):
             .sum("counter")\
             .withColumnRenamed("sum(counter)", "counts")\
             .withColumn("new_counter", lit(1))\
-            .select("timestamp", "content_id", "counts", "new_counter")
+            .select("timestamp", "content_id", "counts", "new_counter")\
+            .sort(df["timestamp"].asc(), df["counts"].desc())
 
 def count_num_content_request(df):
     return df.groupBy("timestamp")\
