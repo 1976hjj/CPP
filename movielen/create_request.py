@@ -41,7 +41,7 @@ data_df = spark.createDataFrame(record, schema=schema.data_schema).na.drop()
 df_rounded = transformation.round_timestamp(data_df,int(data_int))
 
 # Group data follow time interval
-df_filter = df_rounded.filter(df_rounded.timestamp == data_time)
+df_filter = df_rounded.filter(df_rounded.timestamp == 1776)
 df_indexed = df_filter.withColumn("id", monotonically_increasing_id())
 df_cache_indexed = df_indexed.withColumn("id", df_indexed["id"] % 55)
 
