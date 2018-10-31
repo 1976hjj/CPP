@@ -36,7 +36,7 @@ df_rounded.persist()
 # Group data follow time interval
 df_grouped = transformation.group(df_rounded)
 df_list_request = transformation.export_list_request(df_rounded)
-df_count = transformation.count_num_content_request(df_list_request)
+#df_count = transformation.count_num_content_request(df_list_request)
 
 # Calculate the derivative level 1 and 2
 #df_derivative = transformation.derivative(df_grouped)
@@ -45,5 +45,5 @@ df_count = transformation.count_num_content_request(df_list_request)
 # Lable data
 data_label = transformation.der_lab_data(df_grouped)
 data_label.repartition(1, data_label["content_id"]).write.csv("dataset_{}_days_interval".format(data_int), sep=";")
-df_count.repartition(1).write.csv("datacount_{}_days_interval".format(data_int), sep=";")
+#df_count.repartition(1).write.csv("datacount_{}_days_interval".format(data_int), sep=";")
 df_list_request.repartition(1).write.csv("datalist_{}_days_interval".format(data_int), sep=";")
