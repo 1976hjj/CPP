@@ -63,3 +63,16 @@ def der_lab_data(df):
                 .withColumn("label", when((lag(df["counts"], -1).over(window)).isNull(), 0).otherwise(lag(df["counts"], -1).over(window)))
     return df_der_1.withColumn("d2", df_der_1["d1"] - when((lag(df_der_1["d1"], 1).over(window)).isNull(), 0).otherwise(lag(df_der_1["d1"], 1).over(window)))\
                 .select("content_id","counts", "d1", "d2", "label")
+
+def count_num_content_request(df):
+    df_temp = df.groupBy("timestamp", "content_id")\
+            .sum("counter")\
+            .withColumnRenamed("sum(counter)", "counts")\
+            .withColumn("new_counter", lit(1))\
+            .select("timestamp", "content_id", "counts", "new_counter")
+    return df_temp.groupBy("timestamp")\
+            .sum("new_counter", "counts")\
+            .withColumnRenamed("sum(new_counter)", "num_content")\
+            .withColumnRenamed("sum(counts)", "num_request")\
+            .select("timestamp", "num_content", "num_request")
+    
