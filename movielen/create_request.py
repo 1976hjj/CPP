@@ -38,10 +38,12 @@ record = parsed_data.map(lambda r: Row(timestamp=schema.toInt(r[0]), content_id=
 data_df = spark.createDataFrame(record, schema=schema.data_schema).na.drop()
 
 # Round time follow the interval
-df_rounded = transformation.round_timestamp(data_df,int(data_int))
+df_rounded = df_rounded.withColumn("timestamp_rounded", (df["timestamp"] - df["timestamp"] % (3600*24*data_int))/(3600*24*data_int))
 
 # Group data follow time interval
-df_filter = df_rounded.filter(df_rounded.timestamp == 1776)
+df_filter = df_rounded.filter(df_rounded.timestamp_rounded == 1776)\
+                    .select("timestamp", "timestamp_rounded", "content_id")\
+                    .sort(df_rounded["timestamp"].asc())
 df_indexed = df_filter.withColumn("id", monotonically_increasing_id())
 df_cache_indexed = df_indexed.withColumn("id", df_indexed["id"] % 55)
 
