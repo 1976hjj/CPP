@@ -38,7 +38,7 @@ record = parsed_data.map(lambda r: Row(timestamp=schema.toInt(r[0]), content_id=
 data_df = spark.createDataFrame(record, schema=schema.data_schema).na.drop()
 
 # Round time follow the interval
-df_rounded = df_rounded.withColumn("timestamp_rounded", (df["timestamp"] - df["timestamp"] % (3600*24*data_int))/(3600*24*data_int))
+df_rounded = data_df.withColumn("timestamp_rounded", (data_df["timestamp"] - data_df["timestamp"] % (3600*24*data_int))/(3600*24*data_int))
 
 # Group data follow time interval
 df_filter = df_rounded.filter(df_rounded.timestamp_rounded == 1776)\
