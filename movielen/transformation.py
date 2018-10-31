@@ -75,5 +75,5 @@ def count_num_content_request(df):
             .withColumnRenamed("sum(new_counter)", "num_content")\
             .withColumnRenamed("sum(counts)", "num_request")\
             .select("timestamp", "num_content", "num_request")\
-            .sort(df["timestamp"]).asc()
+            .sort(df["timestamp"].asc())
     
