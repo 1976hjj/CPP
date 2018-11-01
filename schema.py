@@ -13,8 +13,8 @@ df_schema = StructType(
     [
         StructField("user_id", IntegerType(), True),
         StructField("content_id", IntegerType(), True),
-        StructField("rating", IntegerType(), True),
-        StructField("timestamp", FloatType(), True)
+        StructField("rating", FloatType(), True),
+        StructField("timestamp", IntegerType(), True)
     ]
 )
 
