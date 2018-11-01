@@ -22,7 +22,7 @@ df_rounded_schema = StructType(
         StructField("timestamp", FloatType(), True),
         StructField("content_id", IntegerType(), True),
         StructField("counter", IntegerType(), True),
-        StructField("timestamp_", FloatType(), True)
+        StructField("timestamp_", IntegerType(), True)
     ]
 )
 
