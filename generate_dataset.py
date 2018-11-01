@@ -30,7 +30,7 @@ if args.interval:
     if toInt(num) is not None:
         data_int = int(num)
 
-dataset_path = glob("./dataset_10_days_interval/*.csv")
+dataset_path = glob.glob("./dataset_{}_days_interval/*.csv".format(data_int))
 dataset_all = pd.read_csv(dataset_path[0],names=["timestamp","content_id","counts","d1", "d2", "label"], sep=";")
 
 df_grouped = dataset_all.groupby("content_id")
@@ -40,14 +40,14 @@ for content_id, group in df_grouped:
     group[group.timestamp < (data_timestamp + 1)].to_csv("./data_separated/{}_train.csv".format(content_id), header=False, sep=";", index=False)
     group[group.timestamp == (data_timestamp + 1)].to_csv("./data_separated/{}_test.csv".format(content_id), header=False, sep=";", index=False)
 
-datalist_path = glob("./datalist_{}_days_interval/*.csv".format(data_int))
+datalist_path = glob.glob("./datalist_{}_days_interval/*.csv".format(data_int))
 datalist_all = pd.read_csv(datalist_path[0],names=["timestamp","content_id","counts","const"], sep=";")
 
 data_filtered = datalist_all[datalist_all.timestamp == data_timestamp]
 data_sorted = data_filtered[["counts", "content_id"]].sort_values(by=["counts"],ascending=False)
 data_sorted.to_csv("./content_popularity/timestamp_{}.csv".format(data_timestamp), header=False, sep=";", index=False)
 
-content_popularity_path = glob("./content_popularity_all/*.csv".format(data_int))
+content_popularity_path = glob.glob("./content_popularity_all/*.csv".format(data_int))
 list_content = pd.read_csv(content_popularity_path[0],names=["counts","content_id"], sep=";")
 list_content_id = list_content[["content_id"]]
 
@@ -79,7 +79,7 @@ data_sorted = data_sorted[["counts","content_id"]]
 data_sorted.to_csv("./content_popularity/timestamp_{}.csv".format(timestamp_), header=False, sep=";", index=False)
 
 
-dataset_all_path = glob("./dataround_{}_days_interval/*.csv".format(data_int))
+dataset_all_path = glob.glob("./dataround_{}_days_interval/*.csv".format(data_int))
 dataset_all = pd.read_csv(dataset_all_path[0],names=["timestamp", "content_id", "counter", "timestamp_"], sep=";")
 dataset_filter = dataset_all[dataset_all.timestamp == (data_timestamp + 1)].sort_values(by=["timestamp_"],ascending=True).reset_index(inplace=True)
 dataset_filter["cache"] = (dataset_filter["Index"] % 55) + 1
