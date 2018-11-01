@@ -7,8 +7,8 @@ def add_counter(df):
             .select("timestamp", "content_id", "counter")
 
 def round_timestamp(df, days):
-    return df.withColumnRenamed("timestamp", "timestamp_")\
-            .withColumn("timestamp", (df["timestamp_"] - df["timestamp_"] % (3600*24*days))/(3600*24*days))\
+    df = df.withColumnRenamed("timestamp", "timestamp_")
+    return df.withColumn("timestamp", (df["timestamp_"] - df["timestamp_"] % (3600*24*days))/(3600*24*days))\
             .select("timestamp", "content_id", "counter", "timestamp_")
     
 def group(df):
