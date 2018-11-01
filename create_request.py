@@ -5,6 +5,7 @@ import os
 import tempfile
 from pyspark.sql import Row
 import argparse
+import glob
 from pyspark.sql.functions import monotonically_increasing_id 
 
 spark = SparkSession.builder.getOrCreate()
@@ -16,7 +17,7 @@ parser.add_argument("--interval", help="Insert interval to integrate data (days)
 parser.add_argument("--timestamp", help="Insert timestamp to get requests")
 args = parser.parse_args()
 data_int = 10 #default value
-data_time = 1775 #default value
+data_time = 1776 #default value
 if args.interval:
     num = args.interval
     if schema.toInt(num) is not None:
