@@ -6,7 +6,7 @@ import tempfile
 from pyspark.sql import Row
 import argparse
 import glob
-from pyspark.sql.functions import monotonically_increasing_id 
+from pyspark.sql.functions import monotonically_increasing_id, lit
 
 spark = SparkSession.builder.getOrCreate()
 sc = spark.sparkContext
@@ -16,8 +16,8 @@ parser = argparse.ArgumentParser()
 parser.add_argument("--interval", help="Insert interval to integrate data (days)")
 parser.add_argument("--timestamp", help="Insert timestamp to get requests")
 args = parser.parse_args()
-data_int = 10 #default value
-data_time = 1776 #default value
+data_int = lit(10) #default value
+data_time = lit(1776) #default value
 if args.interval:
     num = args.interval
     if schema.toInt(num) is not None:
@@ -40,7 +40,7 @@ data_df = spark.createDataFrame(record, schema=schema.df_rounded_schema).na.drop
 
 
 # Group data follow time interval
-data_df = data_df.filter(data_df["timestamp"] == 1776)
+data_df = data_df.filter(data_df["timestamp"] == data_time)
 #df_indexed = df_filter.withColumn("id", monotonically_increasing_id())
 #df_cache_indexed = df_indexed.withColumn("id", df_indexed["id"] % 55)
 
