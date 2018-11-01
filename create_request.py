@@ -40,8 +40,7 @@ data_df = spark.createDataFrame(record, schema=schema.df_rounded_schema).na.drop
 
 
 # Group data follow time interval
-df_filter = data_df.filter((data_df.timestamp > (data_time -1)) & (data_df.timestamp < (data_time +1)))\
-                    .select("timestamp", "timestamp_", "content_id")\
+df_filter = data_df.select("timestamp", "timestamp_", "content_id")\
                     .sort(data_df["timestamp_"].asc())
 #df_indexed = df_filter.withColumn("id", monotonically_increasing_id())
 #df_cache_indexed = df_indexed.withColumn("id", df_indexed["id"] % 55)
