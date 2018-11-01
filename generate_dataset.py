@@ -1,9 +1,18 @@
 import pandas as pd  
 import numpy as np  
 import argparse
-import schema
 import glob
 
+def toInt(num):
+    try:
+        return int(num)
+    except ValueError:
+        return None
+def toFloat(num):
+    try:
+        return float(num)
+    except ValueError:
+        return None
 
 # Parse data interval  (default interval: 5 days)
 parser = argparse.ArgumentParser()
@@ -12,14 +21,14 @@ args = parser.parse_args()
 data_timestamp = lit(1775) #default value
 if args.timestamp:
     num = args.timestamp
-    if schema.toInt(num) is not None:
+    if toInt(num) is not None:
         data_timestamp = int(num)
 parser.add_argument("--interval", help="Insert interval to integrate data (days)")
 args = parser.parse_args()
 data_int = lit(10) #default value
 if args.interval:
     num = args.interval
-    if schema.toInt(num) is not None:
+    if toInt(num) is not None:
         data_int = int(num)
 
 dataset_path = glob("./dataset_{}_days_interval/*.csv".format(data_int))
