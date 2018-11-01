@@ -28,7 +28,7 @@ if args.timestamp:
 
 # Load a text file to RDD and convert each line to a Row.
 
-filepath = glob.glob("./dataround_{}_days_interval/*.csv".format(data_int))
+filepath = glob.glob("./preprocess/dataround_{}_days_interval/*.csv".format(data_int))
 lines = sc.textFile(filepath[0])
 parsed_data = lines.map(lambda l: l.split(";"))
 record = parsed_data.map(lambda r: Row(timestamp=schema.toFloat(r[0]), content_id=schema.toInt(r[1]), counter=schema.toInt(r[2]), timestamp_=schema.toInt(r[3])))
@@ -44,4 +44,4 @@ df_filter = data_df.filter(data_df["timestamp"] == data_time)\
 df_indexed = df_filter.withColumn("id", monotonically_increasing_id())
 df_cache_indexed = df_indexed.withColumn("id", df_indexed["id"] % 55)
 
-df_cache_indexed.repartition(1).write.csv("datacache_indexed_{}_days_interval".format(data_int), sep=";")
+df_cache_indexed.repartition(1).write.csv("./preprocess/datacache_indexed_{}_days_interval".format(data_int), sep=";")

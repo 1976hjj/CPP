@@ -85,7 +85,7 @@ data_sorted.to_csv("./content_popularity/timestamp_{}.csv".format(timestamp_), h
 
 
 dataset_all_path = glob.glob("datacache_indexed_{}_days_interval/*.csv".format(data_int))
-dataset_all = pd.read_csv(dataset_all_path[0],names=["timestamp", "timestamp_", "content_id", "cache"], sep=";")
+dataset_all = pd.read_csv(dataset_all_path[0],names=["timestamp", "content_id", "timestamp_", "cache"], sep=";")
 
 df_grouped = dataset_all.groupby("cache")
 for cache, group in df_grouped:
