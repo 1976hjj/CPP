@@ -2,7 +2,6 @@ import pandas as pd
 import numpy as np  
 import argparse
 import glob
-import matplotlib.pyplot as plt  
 from sklearn.model_selection import train_test_split  
 from sklearn.linear_model import LinearRegression 
 from sklearn import metrics
@@ -63,12 +62,14 @@ def train_by_content_id(row):
 
         X_train = data_train[["counts", "d1", "d2"]]
         y_train = data_train["label"]
+        if X_train.shape[0] > 2:
+            return 0
 
         data_test = pd.read_csv("./data_separated/{}_test.csv".format(row["content_id"]),names=["timestamp","content_id","counts","d1", "d2", "label"], sep=";")
 
         X_test = data_test[["counts", "d1", "d2"]]
         y_test = data_test["label"]
-        if X_test.shape[0] == 0:
+        if X_test.shape[0] > 1:
             return 0
         regressor = LinearRegression()  
         regressor.fit(X_train, y_train) 
