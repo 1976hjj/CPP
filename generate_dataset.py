@@ -17,14 +17,13 @@ def toFloat(num):
 # Parse data interval  (default interval: 5 days)
 parser = argparse.ArgumentParser()
 parser.add_argument("--timestamp", help="Insert interval to integrate data (days)")
+parser.add_argument("--interval", help="Insert interval to integrate data (days)")
 args = parser.parse_args()
 data_timestamp = lit(1775) #default value
 if args.timestamp:
     num = args.timestamp
     if toInt(num) is not None:
         data_timestamp = int(num)
-parser.add_argument("--interval", help="Insert interval to integrate data (days)")
-args = parser.parse_args()
 data_int = lit(10) #default value
 if args.interval:
     num = args.interval
