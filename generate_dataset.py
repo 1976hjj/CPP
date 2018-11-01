@@ -30,7 +30,7 @@ if args.interval:
     if toInt(num) is not None:
         data_int = int(num)
 
-dataset_path = glob("./dataset_{}_days_interval/*.csv".format(data_int))
+dataset_path = glob("./dataset_10_days_interval/*.csv")
 dataset_all = pd.read_csv(dataset_path[0],names=["timestamp","content_id","counts","d1", "d2", "label"], sep=";")
 
 df_grouped = dataset_all.groupby("content_id")
