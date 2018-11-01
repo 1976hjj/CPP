@@ -13,17 +13,15 @@ sc = spark.sparkContext
 
 # Parse data interval  (default interval: 5 days)
 parser = argparse.ArgumentParser()
-parser.add_argument("--interval", help="Insert interval to integrate data (days)")
-parser.add_argument("--timestamp", help="Insert timestamp to get requests")
+parser.add_argument("--interval", type=int, default=10, help="Insert interval to integrate data (days)")
+parser.add_argument("--timestamp", type=int, default=1776, help="Insert timestamp to get requests")
 args = parser.parse_args()
-data_int = lit(10) #default value
-data_time = lit(1776) #default value
 if args.interval:
     num = args.interval
     if schema.toInt(num) is not None:
         data_int = int(num)
 if args.timestamp:
-    timest = args.interval
+    timest = args.timestamp
     if schema.toInt(timest) is not None:
         data_time = int(timest)
 
@@ -40,8 +38,10 @@ data_df = spark.createDataFrame(record, schema=schema.df_rounded_schema).na.drop
 
 
 # Group data follow time interval
-data_df = data_df.filter(data_df["timestamp"] == data_time)
-#df_indexed = df_filter.withColumn("id", monotonically_increasing_id())
-#df_cache_indexed = df_indexed.withColumn("id", df_indexed["id"] % 55)
+df_filter = data_df.filter(data_df["timestamp"] == data_time)
+                .select("timestamp", "content_id", "timestamp_")
+                .sort(data_df["timestamp_"].asc())
+df_indexed = df_filter.withColumn("id", monotonically_increasing_id())
+df_cache_indexed = df_indexed.withColumn("id", df_indexed["id"] % 55)
 
-data_df.repartition(1).write.csv("datacache_indexed_{}_days_interval".format(data_int), sep=";")
+df_cache_indexed.repartition(1).write.csv("datacache_indexed_{}_days_interval".format(data_int), sep=";")
