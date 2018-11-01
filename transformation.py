@@ -84,7 +84,7 @@ def count_num_content_request(df):
 def cal_popularity(df):
     df = df.groupBy("content_id")\
             .sum("counter")\
-            .withColumnRenamed("sum(count)", "counts")
+            .withColumnRenamed("sum(counter)", "counts")
     return df.select("counts", "content_id")\
             .sort(df["counts"].desc())
 
