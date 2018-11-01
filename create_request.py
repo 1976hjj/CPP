@@ -33,17 +33,17 @@ if args.timestamp:
 filepath = glob.glob("./dataround_{}_days_interval/*.csv".format(data_int))
 lines = sc.textFile(filepath[0])
 parsed_data = lines.map(lambda l: l.split(";"))
-record = parsed_data.map(lambda r: Row(timestamp=schema.toFloat(r[0]), content_id=schema.toInt(r[1]), counter=schema.toInt(r[2]), timestamp_=schema.toInt(r[3])))
+record = parsed_data.map(lambda r: Row(timestamp=schema.toInt(r[0]), content_id=schema.toInt(r[1]), counter=schema.toInt(r[2]), timestamp_=schema.toInt(r[3])))
 
 # Create dataframe from RDD
 data_df = spark.createDataFrame(record, schema=schema.df_rounded_schema).na.drop()
 
 
 # Group data follow time interval
-#df_filter = data_df.filter((data_df.timestamp > (data_time -1)) & (data_df.timestamp < (data_time +1)))\
-#                    .select("timestamp", "timestamp_", "content_id")\
-#                    .sort(data_df["timestamp_"].asc())
+df_filter = data_df.filter((data_df.timestamp > (data_time -1)) & (data_df.timestamp < (data_time +1)))\
+                    .select("timestamp", "timestamp_", "content_id")\
+                    .sort(data_df["timestamp_"].asc())
 #df_indexed = df_filter.withColumn("id", monotonically_increasing_id())
 #df_cache_indexed = df_indexed.withColumn("id", df_indexed["id"] % 55)
 
-data_df.repartition(1).write.csv("datacache_indexed_{}_days_interval".format(data_int), sep=";")
+df_filter.repartition(1).write.csv("datacache_indexed_{}_days_interval".format(data_int), sep=";")
