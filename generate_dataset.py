@@ -84,11 +84,9 @@ data_sorted = data_sorted[["counts","content_id"]]
 data_sorted.to_csv("./content_popularity/timestamp_{}.csv".format(timestamp_), header=False, sep=";", index=False)
 
 
-dataset_all_path = glob.glob("./dataround_{}_days_interval/*.csv".format(data_int))
-dataset_all = pd.read_csv(dataset_all_path[0],names=["timestamp", "content_id", "counter", "timestamp_"], sep=";")
-dataset_filter = dataset_all[dataset_all.timestamp == (data_timestamp + 1)].sort_values(by=["timestamp_"],ascending=True).reset_index(inplace=True)
-dataset_filter["cache"] = (dataset_filter["Index"] % 55) + 1
-df_grouped = dataset_filter.groupby("cache")
+dataset_all_path = glob.glob("datacache_indexed_{}_days_interval/*.csv".format(data_int))
+dataset_all = pd.read_csv(dataset_all_path[0],names=["timestamp", "timestamp_", "content_id", "cache"], sep=";")
 
+df_grouped = dataset_all.groupby("cache")
 for cache, group in df_grouped:
-    group[["content_id"]].to_csv("./cache/Cache_{}.csv".format(cache), header=False, sep=";", index=False)
+    group[["content_id"]].to_csv("./cache/Cache_{}.csv".format(cache+1), header=False, sep=";", index=False)
