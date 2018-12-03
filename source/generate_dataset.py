@@ -95,7 +95,7 @@ dataset_request = pd.read_csv(dataset_request_path[0],names=["content_id", "coun
 
 df_all_content = pd.merge(df_all_content, dataset_request, on="content_id", how="outer").fillna(0)
 
-df_all_content.to_csv("./result/content_popularity/all_content_{}.csv".format(timestamp_), header=False, sep=";", index=False)
+df_all_content.round(0).astype(int).to_csv("./result/content_popularity/all_content_{}.csv".format(timestamp_), header=False, sep=";", index=False)
 
 # Generate request
 dataset_all_path = glob.glob("./preprocess/datacache_indexed_{}_days_interval/*.csv".format(data_int))
