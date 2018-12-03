@@ -78,12 +78,21 @@ def train_by_content_id(row):
     else:
         return 0
 list_content_id["counts"] = list_content_id.apply(lambda row: train_by_content_id(row), axis=1)
-list_content_id.counts = list_content_id.counts.round()
-data_sorted = list_content_id.sort_values(by=["counts"],ascending=False)
-data_sorted = data_sorted[["counts","content_id"]]
-data_sorted.to_csv("./result/content_popularity/timestamp_{}.csv".format(timestamp_), header=False, sep=";", index=False)
+list_content_id["counts"] = list_content_id.["counts"].astype(int)[list_content_id["counts"] > 0]
+data_sorted_pre = list_content_id.sort_values(by=["counts"],ascending=False)
+data_sorted_pre = data_sorted_pre[["counts","content_id"]]
+data_sorted_pre.to_csv("./result/content_popularity/timestamp_{}.csv".format(timestamp_), header=False, sep=";", index=False)
 
+df_all_content = pd.merge(data_sorted_pre, data_sorted, on="content_id", how="outer").fillna(0)
 
+dataset_request_path = glob.glob("./preprocess/content_list_{}_days_interval/*.csv".format(data_int))
+dataset_request = pd.read_csv(dataset_request_path[0],names=["content_id", "counter"], sep=";")
+
+df_all_content = pd.merge(df_all_content, dataset_request, on="content_id", how="outer").fillna(0)
+
+df_all_content.to_csv("./result/content_popularity/all_content_{}.csv".format(timestamp_), header=False, sep=";", index=False)
+
+# Generate request
 dataset_all_path = glob.glob("./preprocess/datacache_indexed_{}_days_interval/*.csv".format(data_int))
 dataset_all = pd.read_csv(dataset_all_path[0],names=["timestamp", "content_id", "timestamp_", "cache"], sep=";")
 

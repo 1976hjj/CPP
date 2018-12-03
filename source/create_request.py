@@ -45,3 +45,20 @@ df_indexed = df_filter.withColumn("id", monotonically_increasing_id())
 df_cache_indexed = df_indexed.withColumn("id", df_indexed["id"] % 55)
 
 df_cache_indexed.repartition(1).write.csv("./preprocess/datacache_indexed_{}_days_interval".format(data_int), sep=";")
+
+
+###########
+filepath_list = glob.glob("./preprocess/datalist_{}_days_interval/*.csv".format(data_int))
+lines_list = sc.textFile(filepath_list[0])
+parsed_data_list = lines_list.map(lambda l: l.split(";"))
+record_list = parsed_data_list.map(lambda r: Row(timestamp=schema.toFloat(r[0]), content_id=schema.toInt(r[1]), counter=schema.toInt(r[2]), const=schema.toInt(r[3])))
+
+# Create dataframe from RDD
+data_df_list = spark.createDataFrame(record_list, schema=schema.df_list_schema).na.drop()
+
+
+# Group data follow time interval
+df_filter_list = data_df_list.filter(data_df_list["timestamp"] == data_time)\
+                .select("content_id", "counter")
+
+df_filter_list.repartition(1).write.csv("./preprocess/content_list_{}_days_interval".format(data_int), sep=";")

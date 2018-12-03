@@ -25,6 +25,14 @@ df_rounded_schema = StructType(
         StructField("timestamp_", IntegerType(), True)
     ]
 )
+df_list_schema = StructType(
+    [
+        StructField("timestamp", FloatType(), True),
+        StructField("content_id", IntegerType(), True),
+        StructField("counter", IntegerType(), True),
+        StructField("const", IntegerType(), True)
+    ]
+)
 
 def toInt(num):
     try:

@@ -12,7 +12,7 @@ sc = spark.sparkContext
 
 filepath =("./data/ratings.csv")
 
-# Parse data interval  (default interval: 5 days)
+# Parse data interval  (default interval: 10 days)
 parser = argparse.ArgumentParser()
 parser.add_argument("--interval", help="Insert interval to integrate data (days)")
 args = parser.parse_args()
