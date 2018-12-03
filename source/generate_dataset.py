@@ -78,7 +78,8 @@ def train_by_content_id(row):
     else:
         return 0
 list_content_id["counts"] = list_content_id.apply(lambda row: train_by_content_id(row), axis=1)
-list_content_id["counts"] = list_content_id.["counts"].astype(int)[list_content_id["counts"] > 0]
+list_content_id["counts"] = list_content_id["counts"].astype(int)
+list_content_id = list_content_id[list_content_id["counts"] > 0]
 data_sorted_pre = list_content_id.sort_values(by=["counts"],ascending=False)
 data_sorted_pre = data_sorted_pre[["counts","content_id"]]
 data_sorted_pre.to_csv("./result/content_popularity/timestamp_{}.csv".format(timestamp_), header=False, sep=";", index=False)
