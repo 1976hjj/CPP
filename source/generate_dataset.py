@@ -74,6 +74,10 @@ def train_by_content_id(row):
         regressor = LinearRegression()  
         regressor.fit(X_train, y_train) 
         y_pred = regressor.predict(X_test)
+        if (y_pred[0] - X_test[0] > 50):
+            return X_test[0] + 50
+        elif (X_test[0] - y_pred[0] > 50):
+            return X_test[0] - 50
         return y_pred[0]
     else:
         return 0
