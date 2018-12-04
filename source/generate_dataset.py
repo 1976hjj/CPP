@@ -95,6 +95,15 @@ dataset_request = pd.read_csv(dataset_request_path[0],names=["content_id", "coun
 
 df_all_content = pd.merge(df_all_content, dataset_request, on="content_id", how="outer").fillna(0)
 
+df_all_content = df_all_content.sort_values(by=["counts_x"],ascending=True)
+df_all_content["predict_rank"] = range(1,len(df_all_content)+1)
+
+df_all_content = df_all_content.sort_values(by=["counts_y"],ascending=True)
+df_all_content["historic_rank"] = range(1,len(df_all_content)+1)
+
+df_all_content = df_all_content.sort_values(by=["counter"],ascending=True)
+df_all_content["true_rank"] = range(1,len(df_all_content)+1)
+
 df_all_content = df_all_content.sort_values(by=["content_id"],ascending=True)
 df_all_content["new_id"] = range(1,len(df_all_content)+1)
 print(list(df_all_content.columns.values))
