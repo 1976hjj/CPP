@@ -93,7 +93,7 @@ df_all_content = pd.merge(data_sorted_pre, data_sorted, on="content_id", how="ou
 dataset_request_path = glob.glob("./preprocess/content_list_{}_days_interval/*.csv".format(data_int))
 dataset_request = pd.read_csv(dataset_request_path[0],names=["content_id", "counter"], sep=";")
 
-df_all_content = pd.merge(df_all_content, dataset_request, on="content_id", how="outer").fillna(0).sort_values(by=["content_id"],ascending=False)
+df_all_content = pd.merge(df_all_content, dataset_request, on="content_id", how="outer").fillna(0).sort_values(by=["content_id"],ascending=True)
 df_all_content["new_id"] = range(1,len(df_all_content)+1)
 df_all_content.round(0).astype(int).to_csv("./result/content_popularity/all_content_{}.csv".format(timestamp_), header=False, sep=";", index=False)
 
@@ -101,6 +101,8 @@ df_all_content.round(0).astype(int).to_csv("./result/content_popularity/all_cont
 dataset_all_path = glob.glob("./preprocess/datacache_indexed_{}_days_interval/*.csv".format(data_int))
 dataset_all = pd.read_csv(dataset_all_path[0],names=["timestamp", "content_id", "timestamp_", "cache"], sep=";")
 
+dataset_all = pd.merge(dataset_all, df_all_content, on="content_id", how="left")
+
 df_grouped = dataset_all.groupby("cache")
 for cache, group in df_grouped:
-    group[["content_id"]].to_csv("./result/cache/Cache_{}.csv".format(cache+1), header=False, sep=";", index=False)
+    group[["new_id"]].to_csv("./result/cache/Cache_{}.csv".format(cache+1), header=False, sep=";", index=False)
