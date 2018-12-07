@@ -117,4 +117,7 @@ dataset_all = pd.merge(dataset_all, df_all_content, on="content_id", how="left")
 
 df_grouped = dataset_all.groupby("cache")
 for cache, group in df_grouped:
-    group[["new_id"]].to_csv("./result/cache/Cache_{}.csv".format(cache+1), header=False, sep=";", index=False)
+    # stupid schema
+    #group[["new_id"]].to_csv("./result/cache/Cache_{}.csv".format(cache+1), header=False, sep=";", index=False)
+    # my schema
+    group[["content_id"]].to_csv("./result/cache/Cache_{}.csv".format(cache+1), header=False, sep=";", index=False)
