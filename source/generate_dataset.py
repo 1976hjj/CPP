@@ -48,7 +48,7 @@ datalist_all = pd.read_csv(datalist_path[0],names=["timestamp","content_id","cou
 
 data_filtered = datalist_all[datalist_all.timestamp == data_timestamp]
 data_sorted = data_filtered[["counts", "content_id"]].sort_values(by=["counts"],ascending=False)
-data_sorted.to_csv("./result/content_popularity/timestamp_{}.csv".format(data_timestamp), header=False, sep=";", index=False)
+#data_sorted.to_csv("./result/content_popularity/timestamp_{}.csv".format(data_timestamp), header=False, sep=";", index=False)
 
 content_popularity_path = glob.glob("./content_popularity_all/*.csv".format(data_int))
 list_content = pd.read_csv(content_popularity_path[0],names=["counts","content_id"], sep=";")
@@ -86,7 +86,7 @@ list_content_id["counts"] = list_content_id["counts"].astype(int)
 list_content_id = list_content_id[list_content_id["counts"] > 0]
 data_sorted_pre = list_content_id.sort_values(by=["counts"],ascending=False)
 data_sorted_pre = data_sorted_pre[["counts","content_id"]]
-data_sorted_pre.to_csv("./result/content_popularity/timestamp_{}.csv".format(timestamp_), header=False, sep=";", index=False)
+#data_sorted_pre.to_csv("./result/content_popularity/timestamp_{}.csv".format(timestamp_), header=False, sep=";", index=False)
 
 df_all_content = pd.merge(data_sorted_pre, data_sorted, on="content_id", how="outer").fillna(0)
 
@@ -107,7 +107,10 @@ df_all_content["true_rank"] = range(1,len(df_all_content)+1)
 df_all_content = df_all_content.sort_values(by=["content_id"],ascending=True)
 df_all_content["new_id"] = range(1,len(df_all_content)+1)
 print(list(df_all_content.columns.values))
-df_all_content.round(0).astype(int).to_csv("./result/content_popularity/all_content_{}.csv".format(timestamp_), header=False, sep=";", index=False)
+df_all_content = df_all_content.round(0).astype(int)
+df_all_content.to_csv("./result/content_popularity/all_content_{}.csv".format(timestamp_), header=False, sep=";", index=False)
+df_all_content[["counts_x","content_id"]].sort_values(by=["counts_x","content_id"],ascending=False).to_csv("./result/content_popularity/timestamp_{}.csv".format(data_timestamp), header=False, sep=";", index=False)
+df_all_content[["counts_y","content_id"]].sort_values(by=["counts_y","content_id"],ascending=False).to_csv("./result/content_popularity/timestamp_{}.csv".format(timestamp_), header=False, sep=";", index=False)
 
 # Generate request
 dataset_all_path = glob.glob("./preprocess/datacache_indexed_{}_days_interval/*.csv".format(data_int))
