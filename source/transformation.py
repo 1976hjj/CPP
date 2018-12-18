@@ -10,6 +10,11 @@ def round_timestamp(df, days):
     df = df.withColumnRenamed("timestamp", "timestamp_")
     return df.withColumn("timestamp", (df["timestamp_"] - df["timestamp_"] % (3600*24*days))/(3600*24*days))\
             .select("timestamp", "content_id", "counter", "timestamp_")
+
+def round_timestamp_minor(df, hours):
+    df = df.withColumnRenamed("timestamp", "timestamp_")
+    return df.withColumn("timestamp", (df["timestamp_"] - df["timestamp_"] % (3600*hours))/(3600*hours))\
+            .select("timestamp", "content_id", "counter", "timestamp_")
     
 def group(df):
     return df.groupBy("content_id", "timestamp")\
@@ -88,3 +93,12 @@ def cal_popularity(df):
     return df.select("counts", "content_id")\
             .sort(df["counts"].desc())
 
+def count_by_sliding_window(df, window_size):
+    window = Window.partitionBy("content_id").orderBy("timestamp")
+    df_temp = df.withColumn("count_by_window", df["counts"])
+    for i in range(1, window_size):
+        df_temp = df.withColumn("count_by_window", df["counts"] + when((lag(df["count_by_window"], 1).over(window)).isNull(), df["counts"]).otherwise(lag(df["count_by_window"], 1).over(window)))
+    df_temp = df_temp.withColumn("label", when((lag(df["count_by_window"], -window_size).over(window)).isNull(), 0).otherwise(lag(df["count_by_window"], -window_size).over(window)))\
+                     .withColumn("d1", df["count_by_window"] - when((lag(df["count_by_window"], 1).over(window)).isNull(), 0).otherwise(lag(df["count_by_window"], 1).over(window)))\
+    return df_temp.withColumn("d2", df_der_1["d1"] - when((lag(df_der_1["d1"], 1).over(window)).isNull(), 0).otherwise(lag(df_der_1["d1"], 1).over(window)))\
+                .select("timestamp","content_id","counts", "count_by_window", "d1", "d2", "label")
