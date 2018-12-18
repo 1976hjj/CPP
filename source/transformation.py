@@ -100,5 +100,5 @@ def count_by_sliding_window(df, window_size):
         df = df.withColumn("count_by_window", df["counts"] + when((lag(df["count_by_window"], 1).over(window)).isNull(), df["counts"]).otherwise(lag(df["count_by_window"], 1).over(window)))
     df = df.withColumn("label", when((lag(df["count_by_window"], -window_size).over(window)).isNull(), 0).otherwise(lag(df["count_by_window"], -window_size).over(window)))\
                      .withColumn("d1", df["count_by_window"] - when((lag(df["count_by_window"], 1).over(window)).isNull(), 0).otherwise(lag(df["count_by_window"], 1).over(window)))
-    return df.withColumn("d2", df_der_1["d1"] - when((lag(df_der_1["d1"], 1).over(window)).isNull(), 0).otherwise(lag(df_der_1["d1"], 1).over(window)))\
+    return df.withColumn("d2", df["d1"] - when((lag(df["d1"], 1).over(window)).isNull(), 0).otherwise(lag(df["d1"], 1).over(window)))\
                 .select("timestamp","content_id","counts","count_by_window","d1","d2","label")
