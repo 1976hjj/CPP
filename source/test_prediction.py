@@ -6,6 +6,13 @@ from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression 
 from sklearn import metrics
 
+parser = argparse.ArgumentParser()
+parser.add_argument("--interval", type=int, default=10, help="Insert interval to integrate data (days)")
+args = parser.parse_args()
+if args.interval:
+    num = args.interval
+    if schema.toInt(num) is not None:
+        data_int = int(num)
 
 
 dataset_path = glob.glob("./preprocess/newdataset_{}_days_interval/*.csv".format(data_int))
