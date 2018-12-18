@@ -58,7 +58,8 @@ data_df = transformation.add_counter(data_df)
 # New prediction data
 ###################################################################################
 df_rounded = transformation.round_timestamp_minor(data_df, data_minor)
-df_rounded.persist()
+df_rounded = transformation.filter_by_contentid(318)
+#df_rounded.persist()
 
 df_grouped = transformation.group(df_rounded)
 
