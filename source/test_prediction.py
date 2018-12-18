@@ -17,13 +17,18 @@ if args.interval:
 
 dataset_path = glob.glob("./preprocess/newdataset_{}_days_interval/*.csv".format(data_int))
 dataset = pd.read_csv(dataset_path[0],names=["timestamp","content_id","counts","count_by_window","d1", "d2", "label"], sep=";")
+dataset = dataset.sort_values(by=["timestamp"],ascending=True)
 
-X = dataset[["count_by_window", "d1", "d2"]]
-y = dataset["label"]
+split_point = (int)(dataset.shape[0]*0.9)
+
+X_train = dataset[["count_by_window", "d1", "d2"]].iloc[23:split_point]
+y_train = dataset["label"].iloc[23:split_point]
+X_test = dataset[["count_by_window", "d1", "d2"]].iloc[split_point:dataset.shape[0]-23]
+y_test = dataset["label"].iloc[split_point:dataset.shape[0]-23]
 
 print(dataset["counts"].mean())
 
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.05, random_state=0) 
+#X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.05, random_state=0) 
 
 #dataset_test = pd.read_csv("../dataset_content318_8day_derivative_2/test_data.txt",names=["counts","d1", "d2", "label"], sep=";")
 
