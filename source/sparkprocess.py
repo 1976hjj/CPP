@@ -35,35 +35,35 @@ record = parsed_data.map(lambda r: Row(user_id=schema.toInt(r[0]), content_id=sc
 data_df = spark.createDataFrame(record, schema=schema.df_schema).na.drop()
 data_df = transformation.add_counter(data_df)
 
-# # Round time follow the interval
-# df_rounded = transformation.round_timestamp(data_df, data_int)
-# df_rounded.persist()
+# Round time follow the interval
+df_rounded = transformation.round_timestamp(data_df, data_int)
+df_rounded.persist()
 
-# # Group data follow time interval
-# df_content_popularity = transformation.cal_popularity(df_rounded)
-# df_grouped = transformation.group(df_rounded)
-# df_list_request = transformation.export_list_request(df_rounded)
-# df_count = transformation.count_num_content_request(df_list_request)
+# Group data follow time interval
+df_content_popularity = transformation.cal_popularity(df_rounded)
+df_grouped = transformation.group(df_rounded)
+df_list_request = transformation.export_list_request(df_rounded)
+df_count = transformation.count_num_content_request(df_list_request)
 
-# # Lable data
-# data_label = transformation.der_lab_data(df_grouped)
-# data_label.repartition(1).write.csv("./preprocess/dataset_{}_days_interval".format(data_int), sep=";", header=False)
-# df_count.repartition(1).write.csv("./preprocess/datacount_{}_days_interval".format(data_int), sep=";", header=False)
-# df_list_request.repartition(1).write.csv("./preprocess/datalist_{}_days_interval".format(data_int), sep=";", header=False)
-# df_rounded.repartition(1).write.csv("./preprocess/dataround_{}_days_interval".format(data_int), sep=";", header=False)
-# #df_content_popularity.repartition(1).write.csv("./preprocess/content_popularity_all", sep=";", header=False)
-# df_rounded.unpersist()
+# Lable data
+data_label = transformation.der_lab_data(df_grouped)
+data_label.repartition(1).write.csv("./preprocess/dataset_{}_days_interval".format(data_int), sep=";", header=False)
+df_count.repartition(1).write.csv("./preprocess/datacount_{}_days_interval".format(data_int), sep=";", header=False)
+df_list_request.repartition(1).write.csv("./preprocess/datalist_{}_days_interval".format(data_int), sep=";", header=False)
+df_rounded.repartition(1).write.csv("./preprocess/dataround_{}_days_interval".format(data_int), sep=";", header=False)
+#df_content_popularity.repartition(1).write.csv("./preprocess/content_popularity_all", sep=";", header=False)
+df_rounded.unpersist()
 
 ###################################################################################
 # New prediction data
 ###################################################################################
-df_rounded = transformation.round_timestamp_minor(data_df, data_minor)
-df_rounded = transformation.filter_by_contentid(df_rounded,318)
+df_rounded2 = transformation.round_timestamp_minor(data_df, data_minor)
+df_rounded2 = transformation.filter_by_contentid(df_rounded2,318)
 #df_rounded.persist()
 
-df_grouped = transformation.group(df_rounded)
+df_grouped2 = transformation.group(df_rounded2)
 
-data_label = transformation.count_by_sliding_window(df_grouped, data_int*24/data_minor)
-data_label.repartition(1).write.csv("./preprocess/newdataset_{}_days_interval".format(data_int), sep=";", header=False)
+data_label2 = transformation.count_by_sliding_window(df_grouped2, data_int*24/data_minor)
+data_label2.repartition(1).write.csv("./preprocess/newdataset_{}_days_interval".format(data_int), sep=";", header=False)
 
 
