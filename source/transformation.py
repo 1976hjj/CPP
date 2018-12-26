@@ -69,8 +69,8 @@ def filter_by_timestamp(df, start, end):
     elif(start > 0):
         return df.filter(df["timestamp"] >= start)
     elif(end > 0):
-        return df.filter((df["timestamp"] <= end)
-        
+        return df.filter(df["timestamp"] <= end)
+
 def der_lab_data(df):
     window = Window.partitionBy("content_id").orderBy("timestamp")
     df_der_1 = df.withColumn("d1", df["counts"] - when((lag(df["counts"], 1).over(window)).isNull(), 0).otherwise(lag(df["counts"], 1).over(window)))\
