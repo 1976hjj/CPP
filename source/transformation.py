@@ -70,6 +70,8 @@ def filter_by_timestamp(df, start, end):
         return df.filter(df["timestamp"] >= start)
     elif(end > 0):
         return df.filter(df["timestamp"] <= end)
+    else:
+        return df
 
 def der_lab_data(df):
     window = Window.partitionBy("content_id").orderBy("timestamp")
