@@ -74,7 +74,7 @@ df_rounded2 = transformation.filter_by_contentid(df_rounded2,318)
 
 df_grouped2 = transformation.group(df_rounded2)
 
-data_label2 = transformation.count_by_sliding_window(df_grouped2, data_int*24/data_minor)
+data_label2 = transformation.count_by_sliding_window(df_grouped2, (int) (data_int*24/data_minor))
 data_label2.repartition(1).write.csv("./preprocess/newdataset_{}_days_interval".format(data_int), sep=";", header=False)
 
 
