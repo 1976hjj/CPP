@@ -14,8 +14,10 @@ filepath =("./data/ratings.csv")
 
 # Parse data interval  (default interval: 10 days)
 parser = argparse.ArgumentParser()
-parser.add_argument("--interval", type=int, default=10, help="Insert interval to integrate data (days)")
-parser.add_argument("--minor", type=int, default=12, help="Set minor")
+parser.add_argument("--interval", "-i", type=int, default=10, help="Insert interval to integrate data (days)")
+parser.add_argument("--minor", "-m", type=int, default=12, help="Set minor")
+parser.add_argument("--start", "-s", type=int, default=-1, help="Start time")
+parser.add_argument("--end", "-e", type=int, default=-1, help="End time")
 args = parser.parse_args()
 if args.interval:
     num = args.interval
@@ -25,6 +27,14 @@ if args.minor:
     minor = args.minor
     if schema.toInt(minor) is not None:
         data_minor = int(minor)
+if args.start:
+    start_time = args.start
+    if schema.toInt(start_time) is not None:
+        data_start_time = int(start_time)
+if args.end:
+    end_time = args.end
+    if schema.toInt(end_time) is not None:
+        data_end_time = int(end_time)
 
 # Load a text file to RDD and convert each line to a Row.
 lines = sc.textFile(filepath)
@@ -34,6 +44,7 @@ record = parsed_data.map(lambda r: Row(user_id=schema.toInt(r[0]), content_id=sc
 # Create dataframe from RDD
 data_df = spark.createDataFrame(record, schema=schema.df_schema).na.drop()
 data_df = transformation.add_counter(data_df)
+data_df = transformation.filter_by_timestamp(data_df, start_time, end_time)
 
 # Round time follow the interval
 df_rounded = transformation.round_timestamp(data_df, data_int)
